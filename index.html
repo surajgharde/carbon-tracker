@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emission Tracking & Analysis System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation Header -->
+        <header class="app-header">
+            <div class="container flex items-center justify-between">
+                <div class="logo">
+                    <h2 class="m-0">🌱 Carbon Tracker</h2>
+                </div>
+                <nav class="main-nav">
+                    <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-section="entry">Data Entry</button>
+                    <button class="nav-btn" data-section="analytics">Analytics</button>
+                    <button class="nav-btn" data-section="reports">Reports</button>
+                    <button class="nav-btn" data-section="settings">Settings</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="container">
+                    <div class="section-header">
+                        <h1>Carbon Emissions Dashboard</h1>
+                        <p class="text-secondary">Monitor and track your organization's carbon footprint</p>
+                    </div>
+
+                    <!-- Key Metrics Cards -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-icon">📊</div>
+                            <div class="metric-content">
+                                <div class="metric-value" id="totalEmissions">3,450</div>
+                                <div class="metric-label">Total CO₂ (kg)</div>
+                                <div class="metric-change positive">↓ 8.2% from last month</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">📈</div>
+                            <div class="metric-content">
+                                <div class="metric-value" id="monthlyEmissions">575</div>
+                                <div class="metric-label">This Month (kg)</div>
+                                <div class="metric-change neutral">Monthly Target: 417 kg</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-content">
+                                <div class="metric-value" id="goalProgress">69%</div>
+                                <div class="metric-label">Annual Goal Progress</div>
+                                <div class="metric-change positive">15% reduction target</div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-icon">⚡</div>
+                            <div class="metric-content">
+                                <div class="metric-value" id="topSource">Energy</div>
+                                <div class="metric-label">Top Emission Source</div>
+                                <div class="metric-change neutral">64% of total emissions</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Monthly Emissions Trend</h3>
+                            </div>
+                            <div class="chart-wrapper" style="position: relative; height: 300px;">
+                                <canvas id="monthlyTrendChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Emissions by Scope</h3>
+                            </div>
+                            <div class="chart-wrapper" style="position: relative; height: 300px;">
+                                <canvas id="scopeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities -->
+                    <div class="recent-activities">
+                        <div class="section-header">
+                            <h3>Recent Activities</h3>
+                            <button class="btn btn--outline btn--sm" onclick="showSection('entry')">Add New Activity</button>
+                        </div>
+                        <div class="activities-list" id="recentActivitiesList">
+                            <!-- Activities will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Entry Section -->
+            <section id="entry" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h1>Data Entry</h1>
+                        <p class="text-secondary">Add new emission activities and track your carbon footprint</p>
+                    </div>
+
+                    <!-- Category Tabs -->
+                    <div class="tab-container">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" data-category="Transportation">🚗 Transportation</button>
+                            <button class="tab-btn" data-category="Energy">⚡ Energy</button>
+                            <button class="tab-btn" data-category="Business Travel">✈️ Business Travel</button>
+                            <button class="tab-btn" data-category="Supply Chain">📦 Supply Chain</button>
+                        </div>
+
+                        <!-- Entry Forms -->
+                        <div class="tab-content">
+                            <form id="activityForm" class="entry-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="activityDate">Date</label>
+                                        <input type="date" class="form-control" id="activityDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="subcategory">Activity Type</label>
+                                        <select class="form-control" id="subcategory" required>
+                                            <option value="">Select activity type</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="quantity">Quantity</label>
+                                        <input type="number" class="form-control" id="quantity" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="unit">Unit</label>
+                                        <input type="text" class="form-control" id="unit" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label" for="emissionFactor">Emission Factor</label>
+                                        <input type="number" class="form-control" id="emissionFactor" step="0.001" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="calculatedEmissions">Calculated Emissions (kg CO₂)</label>
+                                        <input type="number" class="form-control" id="calculatedEmissions" readonly>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn--primary">Add Activity</button>
+                                    <button type="reset" class="btn btn--outline">Clear Form</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h1>Analytics</h1>
+                        <p class="text-secondary">Analyze trends and insights from your emission data</p>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Category Comparison</h3>
+                            </div>
+                            <div class="chart-wrapper" style="position: relative; height: 350px;">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Intensity Metrics</h3>
+                            </div>
+                            <div class="intensity-metrics">
+                                <div class="intensity-item">
+                                    <div class="intensity-value">2.3</div>
+                                    <div class="intensity-label">kg CO₂/employee/day</div>
+                                </div>
+                                <div class="intensity-item">
+                                    <div class="intensity-value">45.2</div>
+                                    <div class="intensity-label">kg CO₂/1000 revenue</div>
+                                </div>
+                                <div class="intensity-item">
+                                    <div class="intensity-value">12.8</div>
+                                    <div class="intensity-label">kg CO₂/m² office space</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Goal Tracking -->
+                    <div class="goal-tracking">
+                        <h3>Goal Tracking</h3>
+                        <div class="goal-progress-container">
+                            <div class="goal-info">
+                                <div class="goal-title">Annual Reduction Target</div>
+                                <div class="goal-subtitle" id="goalSubtitle">15% reduction from baseline</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="goalProgressFill" style="width: 69%;"></div>
+                            </div>
+                            <div class="goal-stats">
+                                <span id="goalStatsText">3,450 kg / 5,000 kg target</span>
+                                <span class="status status--success" id="goalStatus">On Track</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h1>Reports</h1>
+                        <p class="text-secondary">Generate and export emission reports for compliance and analysis</p>
+                    </div>
+
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>📊 Monthly Emission Report</h3>
+                                <p>Detailed breakdown of monthly emissions by category and scope</p>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn--primary" onclick="generateReport('monthly')">Generate Report</button>
+                                <button class="btn btn--outline" onclick="exportData('pdf')">Export PDF</button>
+                            </div>
+                        </div>
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>📈 Annual Sustainability Report</h3>
+                                <p>Comprehensive annual report with trends and goal progress</p>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn--primary" onclick="generateReport('annual')">Generate Report</button>
+                                <button class="btn btn--outline" onclick="exportData('pdf')">Export PDF</button>
+                            </div>
+                        </div>
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>📋 Compliance Report</h3>
+                                <p>Standardized report for regulatory compliance requirements</p>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn--primary" onclick="generateReport('compliance')">Generate Report</button>
+                                <button class="btn btn--outline" onclick="exportData('csv')">Export CSV</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report Preview -->
+                    <div class="report-preview hidden" id="reportPreview">
+                        <div class="report-preview-header">
+                            <h3>Report Preview</h3>
+                            <button class="btn btn--outline btn--sm" onclick="closeReportPreview()">Close</button>
+                        </div>
+                        <div class="report-content" id="reportContent">
+                            <!-- Report content will be generated here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h1>Settings</h1>
+                        <p class="text-secondary">Configure your emission tracking preferences and factors</p>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>User Profile</h3>
+                            <form class="settings-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="organizationName">Organization Name</label>
+                                    <input type="text" class="form-control" id="organizationName" value="Green Tech Corp">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contactEmail">Contact Email</label>
+                                    <input type="email" class="form-control" id="contactEmail" value="admin@greentechcorp.com">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="employees">Number of Employees</label>
+                                    <input type="number" class="form-control" id="employees" value="150">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="settings-card">
+                            <h3>System Preferences</h3>
+                            <form class="settings-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="defaultUnit">Default Unit System</label>
+                                    <select class="form-control" id="defaultUnit">
+                                        <option value="metric">Metric (kg, km, kWh)</option>
+                                        <option value="imperial">Imperial (lbs, miles)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="reportingPeriod">Reporting Period</label>
+                                    <select class="form-control" id="reportingPeriod">
+                                        <option value="monthly">Monthly</option>
+                                        <option value="quarterly">Quarterly</option>
+                                        <option value="annual">Annual</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <input type="checkbox" id="autoCalculate" checked> Auto-calculate emissions
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button class="btn btn--primary" onclick="saveSettings()">Save Settings</button>
+                        <button class="btn btn--outline" onclick="resetSettings()">Reset to Defaults</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
